@@ -175,6 +175,54 @@ WHERE firsDateOrder.Order_Date = firsDateOrder.First_Order_Date
 
 
 -- 7. Which item was purchased just before the customer became a member?
+WITH membersOrders AS (
+SELECT
+  sales.customer_id AS Customer_ID,
+  sales.order_date AS Order_Date,
+  menu.product_name AS Product,
+  members.join_date AS Join_Date
+FROM dannys_diner.sales sales
+INNER JOIN dannys_diner.menu menu ON sales.product_id = menu.product_id
+INNER JOIN dannys_diner.members members ON members.customer_id = sales.customer_id
+WHERE members.join_date > sales.order_date
+), firsDateOrder AS (
+  SELECT 
+	membersOrders.Customer_ID,
+    membersOrders.Order_Date,
+    MAX(membersOrders.Order_Date) OVER(PARTITION BY membersOrders.Customer_ID) AS Ordered_B4_Joining,
+    membersOrders.Product,
+    membersOrders.Join_Date    
+  FROM membersOrders
+), ordersBeforeJoining AS (
+	SELECT
+      firsDateOrder.Customer_ID,
+      firsDateOrder.Ordered_B4_Joining,
+      firsDateOrder.Product,
+      firsDateOrder.Join_Date
+	FROM firsDateOrder
+	WHERE firsDateOrder.Order_Date = firsDateOrder.Ordered_B4_Joining
+)
+
+SELECT
+	ord.Customer_ID,
+    to_char(MIN(ord.Ordered_B4_Joining), 'yyyy-MM-dd') AS "Order Date Before Joining",
+	STRING_AGG(ord.Product, ', ') AS "Producst",
+    to_char(MIN(ord.Join_Date), 'yyyy-MM-dd')  AS "Join Date"
+FROM ordersBeforeJoining ord
+GROUP BY ord.Customer_ID
+
+/*
+
+| customer_id | Order Date Before Joining | Producst     | Join Date  |
+| ----------- | ------------------------- | ------------ | ---------- |
+| A           | 2021-01-01                | sushi, curry | 2021-01-07 |
+| B           | 2021-01-04                | sushi        | 2021-01-09 |
+
+*/
+
+
 -- 8. What is the total items and amount spent for each member before they became a member?
+
+
 -- 9.  If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
 -- 10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
