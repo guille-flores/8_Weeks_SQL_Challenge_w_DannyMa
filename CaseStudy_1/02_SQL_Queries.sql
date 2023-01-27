@@ -135,15 +135,15 @@ GROUP BY mostPopulars.Customer_ID, mostPopulars.mostPopular
 
 -- 6. Which item was purchased first by the customer after they became a member?
 WITH membersOrders AS (
-SELECT
-  sales.customer_id AS Customer_ID,
-  sales.order_date AS Order_Date,
-  menu.product_name AS Product,
-  members.join_date AS Join_Date
-FROM dannys_diner.sales sales
-INNER JOIN dannys_diner.menu menu ON sales.product_id = menu.product_id
-INNER JOIN dannys_diner.members members ON members.customer_id = sales.customer_id
-WHERE members.join_date < sales.order_date
+	SELECT
+	  sales.customer_id AS Customer_ID,
+	  sales.order_date AS Order_Date,
+	  menu.product_name AS Product,
+	  members.join_date AS Join_Date
+	FROM dannys_diner.sales sales
+	INNER JOIN dannys_diner.menu menu ON sales.product_id = menu.product_id
+	INNER JOIN dannys_diner.members members ON members.customer_id = sales.customer_id
+	WHERE members.join_date < sales.order_date
 ), firsDateOrder AS (
   SELECT 
 	membersOrders.Customer_ID,
@@ -176,15 +176,15 @@ WHERE firsDateOrder.Order_Date = firsDateOrder.First_Order_Date
 
 -- 7. Which item was purchased just before the customer became a member?
 WITH membersOrders AS (
-SELECT
-  sales.customer_id AS Customer_ID,
-  sales.order_date AS Order_Date,
-  menu.product_name AS Product,
-  members.join_date AS Join_Date
-FROM dannys_diner.sales sales
-INNER JOIN dannys_diner.menu menu ON sales.product_id = menu.product_id
-INNER JOIN dannys_diner.members members ON members.customer_id = sales.customer_id
-WHERE members.join_date > sales.order_date
+	SELECT
+	  sales.customer_id AS Customer_ID,
+	  sales.order_date AS Order_Date,
+	  menu.product_name AS Product,
+	  members.join_date AS Join_Date
+	FROM dannys_diner.sales sales
+	INNER JOIN dannys_diner.menu menu ON sales.product_id = menu.product_id
+	INNER JOIN dannys_diner.members members ON members.customer_id = sales.customer_id
+	WHERE members.join_date > sales.order_date
 ), firsDateOrder AS (
   SELECT 
 	membersOrders.Customer_ID,
