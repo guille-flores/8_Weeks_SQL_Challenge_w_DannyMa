@@ -4,7 +4,7 @@ SELECT
   sales.customer_id AS Customer,
   SUM(menu.price) AS Total_Spent
 FROM dannys_diner.sales sales
-INNER JOIN dannys_diner.menu ON sales.product_id = menu.product_id
+INNER JOIN dannys_diner.menu menu ON sales.product_id = menu.product_id
 GROUP BY sales.customer_id
 ORDER BY sales.customer_id ASC
 
