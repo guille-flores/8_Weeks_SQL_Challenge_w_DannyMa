@@ -66,8 +66,114 @@ WHERE row_num = 1 /*only get the 1st row=first order*/
 
 
 -- 4. What is the most purchased item on the menu and how many times was it purchased by all customers?
+WITH productsOrdered AS (
+	SELECT
+    	menu.product_name AS Product,
+   		COUNT(*) AS TimesBought
+	FROM dannys_diner.sales sales
+	INNER JOIN dannys_diner.menu menu ON sales.product_id = menu.product_id
+	GROUP BY menu.product_name
+	ORDER BY TimesBought DESC)
+
+SELECT 
+	*
+FROM productsOrdered
+LIMIT 1
+
+/*
+
+| product | timesbought |
+| ------- | ----------- |
+| ramen   | 8           |
+
+*/
+
+
 -- 5. Which item was the most popular for each customer?
+WITH productsOrdered AS (
+  	SELECT 
+  		t1.Customer_ID,
+  		t1.Product,
+  		t1.TimesBought,
+  		MAX(t1.TimesBought) OVER(PARTITION BY t1.Customer_ID) AS mostPopular
+  	FROM
+      (SELECT
+         sales.customer_id AS Customer_ID,
+         menu.product_name AS Product,
+         COUNT(*) AS TimesBought
+       FROM dannys_diner.sales sales
+       INNER JOIN dannys_diner.menu menu ON sales.product_id = menu.product_id
+       GROUP BY sales.customer_id, menu.product_name
+       ORDER BY TimesBought DESC) t1
+), mostPopulars AS (
+  SELECT 
+    productsOrdered.Customer_ID,
+  	productsOrdered.Product,
+    productsOrdered.mostPopular
+  FROM productsOrdered
+  WHERE productsOrdered.TimesBought = productsOrdered.mostPopular
+  )
+
+SELECT
+	mostPopulars.Customer_ID,
+	STRING_AGG(mostPopulars.Product, ', ') AS Products,
+    mostPopulars.mostPopular AS "Times Bought"
+FROM mostPopulars
+GROUP BY mostPopulars.Customer_ID, mostPopulars.mostPopular
+
+/*
+
+| customer_id | products            | Times Bought |
+| ----------- | ------------------- | ------------ |
+| A           | ramen               | 3            |
+| B           | sushi, curry, ramen | 2            |
+| C           | ramen               | 3            |
+
+*/
+
+
+
 -- 6. Which item was purchased first by the customer after they became a member?
+WITH membersOrders AS (
+SELECT
+  sales.customer_id AS Customer_ID,
+  sales.order_date AS Order_Date,
+  menu.product_name AS Product,
+  members.join_date AS Join_Date
+FROM dannys_diner.sales sales
+INNER JOIN dannys_diner.menu menu ON sales.product_id = menu.product_id
+INNER JOIN dannys_diner.members members ON members.customer_id = sales.customer_id
+WHERE members.join_date < sales.order_date
+), firsDateOrder AS (
+  SELECT 
+	membersOrders.Customer_ID,
+    membersOrders.Order_Date,
+    MIN(membersOrders.Order_Date) OVER(PARTITION BY membersOrders.Customer_ID) AS First_Order_Date,
+    membersOrders.Product,
+    membersOrders.Join_Date    
+  FROM membersOrders
+)
+
+SELECT
+	firsDateOrder.Customer_ID,
+    firsDateOrder.First_Order_Date,
+    firsDateOrder.Product,
+    firsDateOrder.Join_Date
+FROM firsDateOrder
+WHERE firsDateOrder.Order_Date = firsDateOrder.First_Order_Date
+
+/*
+
+| customer_id | first_order_date         | product | join_date                |
+| ----------- | ------------------------ | ------- | ------------------------ |
+| A           | 2021-01-10T00:00:00.000Z | ramen   | 2021-01-07T00:00:00.000Z |
+| B           | 2021-01-11T00:00:00.000Z | sushi   | 2021-01-09T00:00:00.000Z |
+
+*/
+
+
+
+
 -- 7. Which item was purchased just before the customer became a member?
 -- 8. What is the total items and amount spent for each member before they became a member?
 -- 9.  If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
