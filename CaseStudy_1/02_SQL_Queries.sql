@@ -222,7 +222,38 @@ GROUP BY ord.Customer_ID
 
 
 -- 8. What is the total items and amount spent for each member before they became a member?
+WITH membersOrders AS (
+  SELECT
+    sales.customer_id AS Customer_ID,
+    menu.product_name AS Product,
+    members.join_date AS Join_Date,
+  	menu.price AS Price
+  FROM dannys_diner.sales sales
+  INNER JOIN dannys_diner.menu menu ON sales.product_id = menu.product_id
+  INNER JOIN dannys_diner.members members ON members.customer_id = sales.customer_id
+  WHERE members.join_date > sales.order_date
+)
+
+SELECT
+	ord.Customer_ID,
+	COUNT(ord.Product) AS Total_Items,
+    SUM(ord.Price) AS Total
+FROM membersOrders ord
+GROUP BY ord.Customer_ID
+
+/*
+
+| customer_id | total_items | total |
+| ----------- | ----------- | ----- |
+| B           | 3           | 40    |
+| A           | 2           | 25    |
+*/
 
 
 -- 9.  If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
+
+
+
+
+
 -- 10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
