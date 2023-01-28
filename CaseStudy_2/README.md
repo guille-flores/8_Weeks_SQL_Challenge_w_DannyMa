@@ -56,16 +56,16 @@ Again, there are many questions in this case study - please feel free to pick an
 Before you start writing your SQL queries however - you might want to investigate the data, you may want to do something with some of those null values and data types in the customer_orders and runner_orders tables!
 
 A. Pizza Metrics
-How many pizzas were ordered?
-How many unique customer orders were made?
-How many successful orders were delivered by each runner?
-How many of each type of pizza was delivered?
-How many Vegetarian and Meatlovers were ordered by each customer?
-What was the maximum number of pizzas delivered in a single order?
-For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
-How many pizzas were delivered that had both exclusions and extras?
-What was the total volume of pizzas ordered for each hour of the day?
-What was the volume of orders for each day of the week?
+1. How many pizzas were ordered?
+2. How many unique customer orders were made?
+3. How many successful orders were delivered by each runner?
+4. How many of each type of pizza was delivered?
+5. How many Vegetarian and Meatlovers were ordered by each customer?
+6. What was the maximum number of pizzas delivered in a single order?
+7. For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
+8. How many pizzas were delivered that had both exclusions and extras?
+9. What was the total volume of pizzas ordered for each hour of the day?
+10. What was the volume of orders for each day of the week?
 
 
 B. Runner and Customer Experience
@@ -109,5 +109,7 @@ Delivery duration
 Average speed
 Total number of pizzas
 If a Meat Lovers pizza was $12 and Vegetarian $10 fixed prices with no cost for extras and each runner is paid $0.30 per kilometre traveled - how much money does Pizza Runner have left over after these deliveries?
+
+
 E. Bonus Questions
 If Danny wants to expand his range of pizzas - how would this impact the existing data design? Write an INSERT statement to demonstrate what would happen if a new Supreme pizza with all the toppings was added to the Pizza Runner menu?
