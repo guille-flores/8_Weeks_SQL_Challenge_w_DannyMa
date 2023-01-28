@@ -92,3 +92,29 @@ GROUP BY pz.pizza_name
 | Vegetarian | 3            |
 */
 
+
+/* 5. How many Vegetarian and Meatlovers were ordered by each customer?*/
+
+SELECT 
+	cco.customer_id,
+    pz.pizza_name,
+    COUNT(*) AS TotalOrdered
+FROM cco
+INNER JOIN pizza_runner.pizza_names pz ON cco.pizza_id = pz.pizza_id
+INNER JOIN cro ON cro.order_id = cco.order_id
+GROUP BY cco.customer_id, pz.pizza_name
+ORDER BY cco.customer_id
+
+/*
+| customer_id | pizza_name | totalordered |
+| ----------- | ---------- | ------------ |
+| 101         | Meatlovers | 2            |
+| 101         | Vegetarian | 1            |
+| 102         | Meatlovers | 2            |
+| 102         | Vegetarian | 1            |
+| 103         | Meatlovers | 3            |
+| 103         | Vegetarian | 1            |
+| 104         | Meatlovers | 3            |
+| 105         | Vegetarian | 1            |
+
+*/
