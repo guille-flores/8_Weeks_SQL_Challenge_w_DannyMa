@@ -33,4 +33,17 @@ WITH cco AS (
       END cancellation
   FROM pizza_runner.runner_orders r_o
 )
+   
+SELECT 
+	COUNT(*)
+FROM cco
+
+  
+/*
+| count |
+| ----- |
+| 14    |
+
+*/
+  
   
