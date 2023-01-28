@@ -1,4 +1,4 @@
-# Case Study #2 - Pizza Runner
+# [Case Study #2 - Pizza Runner](https://8weeksqlchallenge.com/case-study-2/)
 
 ![Case Study #2 Pizza Runner Image](https://8weeksqlchallenge.com/images/case-study-designs/2.png)
 
