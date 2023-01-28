@@ -25,3 +25,11 @@ Because Danny had a few years of experience as a data scientist - he was very aw
 He has prepared for us an entity relationship diagram of his database design but requires further assistance to clean his data and apply some basic calculations so he can better direct his runners and optimise Pizza Runner’s operations.
 
 All datasets exist within the [pizza_runner database schema - be sure to include this reference within your SQL scripts as you start exploring the data and answering the case study questions](https://dbdiagram.io/embed/5f3e085ccf48a141ff558487).
+
+Customer pizza orders are captured in the customer_orders table with 1 row for each individual pizza that is part of the order.
+
+The pizza_id relates to the type of pizza which was ordered whilst the exclusions are the ingredient_id values which should be removed from the pizza and the extras are the ingredient_id values which need to be added to the pizza.
+
+Note that customers can order multiple pizzas in a single order with varying exclusions and extras values even if the pizza is the same type!
+
+The exclusions and extras columns will need to be cleaned up before using them in your queries.
