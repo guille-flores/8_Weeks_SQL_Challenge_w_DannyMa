@@ -34,6 +34,7 @@ WITH cco AS (
   FROM pizza_runner.runner_orders r_o
 )
    
+/* 1. How many pizzas were ordered?*/
 SELECT 
 	COUNT(*)
 FROM cco
@@ -47,3 +48,47 @@ FROM cco
 */
   
   
+/* 2. How many unique customer orders were made?*/
+SELECT 
+    COUNT(DISTINCT cco.order_id)
+FROM cco
+
+/*
+| count |
+| ----- |
+| 10    |
+*/
+
+
+/* 3. How many successful orders were delivered by each runner?*/  
+SELECT 
+	cro.runner_id,
+    COUNT(DISTINCT cro.order_id) AS successful_orders
+FROM cro
+WHERE cro.cancellation IS NULL
+GROUP BY cro.runner_id
+/*
+| runner_id | successful_orders |
+| --------- | ----------------- |
+| 1         | 4                 |
+| 2         | 3                 |
+| 3         | 1                 |
+*/
+
+/* 4. How many of each type of pizza was delivered?*/
+SELECT 
+    pz.pizza_name,
+    COUNT(*) AS TotalOrdered
+FROM cco
+INNER JOIN pizza_runner.pizza_names pz ON cco.pizza_id = pz.pizza_id
+INNER JOIN cro ON cro.order_id = cco.order_id
+WHERE cro.cancellation IS NULL
+GROUP BY pz.pizza_name
+
+/*
+| pizza_name | totalordered |
+| ---------- | ------------ |
+| Meatlovers | 9            |
+| Vegetarian | 3            |
+*/
+
