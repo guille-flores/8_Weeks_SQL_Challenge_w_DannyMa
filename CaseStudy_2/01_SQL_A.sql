@@ -174,3 +174,27 @@ WHERE cro.cancellation IS NULL AND cco.exclusions IS NOT NULL AND cco.extras IS 
 | -------------------------- |
 | 1                          |
 */
+
+
+/* 9. What was the total volume of pizzas ordered for each hour of the day? */
+SELECT 
+	TO_CHAR(cco.order_time, 'YYYY-MM-DD') AS DATE,
+    EXTRACT(HOUR FROM cco.order_time) AS HOUR,
+    COUNT(*) AS order_per_hour
+FROM cco
+GROUP BY TO_CHAR(cco.order_time, 'YYYY-MM-DD'), EXTRACT(HOUR FROM cco.order_time)
+ORDER BY TO_CHAR(cco.order_time, 'YYYY-MM-DD'), EXTRACT(HOUR FROM cco.order_time)
+
+
+/*
+| date       | hour | order_per_hour |
+| ---------- | ---- | -------------- |
+| 2020-01-01 | 18   | 1              |
+| 2020-01-01 | 19   | 1              |
+| 2020-01-02 | 23   | 2              |
+| 2020-01-04 | 13   | 3              |
+| 2020-01-08 | 21   | 3              |
+| 2020-01-09 | 23   | 1              |
+| 2020-01-10 | 11   | 1              |
+| 2020-01-11 | 18   | 2              |
+*/
