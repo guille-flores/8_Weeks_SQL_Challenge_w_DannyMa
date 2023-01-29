@@ -140,4 +140,37 @@ LIMIT 1
 
 
 
-/* 7. For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
+/* 7. For each customer, how many delivered pizzas had at least 1 change and how many had no changes?*/
+SELECT 
+	cco.customer_id,
+    COUNT(*) FILTER (WHERE cco.exclusions IS NOT NULL OR cco.extras IS NOT NULL) AS pizzas_w_changes,
+    COUNT(*) FILTER (WHERE cco.exclusions IS NULL OR cco.extras IS NULL) AS pizzas_wo_changes
+FROM cco
+INNER JOIN cro ON cro.order_id = cco.order_id
+WHERE cro.cancellation IS NULL
+GROUP BY cco.customer_id
+ORDER BY cco.customer_id
+
+/*
+| customer_id | pizzas_w_changes | pizzas_wo_changes |
+| ----------- | ---------------- | ----------------- |
+| 101         | 0                | 2                 |
+| 102         | 0                | 3                 |
+| 103         | 3                | 3                 |
+| 104         | 2                | 2                 |
+| 105         | 1                | 1                 |
+*/
+
+/* 8. How many pizzas were delivered that had both exclusions and extras? */
+
+SELECT 
+    COUNT(*) AS deliver_w_extras_exlusions
+FROM cco
+INNER JOIN cro ON cro.order_id = cco.order_id
+WHERE cro.cancellation IS NULL AND cco.exclusions IS NOT NULL AND cco.extras IS NOT NULL
+
+/*
+| deliver_w_extras_exlusions |
+| -------------------------- |
+| 1                          |
+*/
