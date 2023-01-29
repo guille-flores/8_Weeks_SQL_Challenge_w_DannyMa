@@ -1,5 +1,6 @@
 WITH cco AS (
   SELECT 
+	c_o.customer_id,
   	c_o.order_id,
   	c_o.pizza_id,  
   	CASE
@@ -118,3 +119,25 @@ ORDER BY cco.customer_id
 | 105         | Vegetarian | 1            |
 
 */
+
+
+
+/* 6. What was the maximum number of pizzas delivered in a single order? */
+SELECT 
+	cco.order_id,
+    COUNT(*) AS delivered_pizzas
+FROM cco
+INNER JOIN cro ON cro.order_id = cco.order_id
+WHERE cro.cancellation IS NULL
+GROUP BY cco.order_id
+ORDER BY delivered_pizzas DESC
+LIMIT 1
+
+/*
+| oder_id | deliveredpizzas |
+| 4       | 3               |
+*/
+
+
+
+/* 7. For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
