@@ -123,3 +123,61 @@ WHERE cro.duration IS NOT NULL;
 | --------------------------- |
 | 30                          |
 */
+
+
+/* 6. What was the average speed for each runner for each delivery and do you notice any trend for these values? */
+SELECT 
+	t1.runner_id,
+    t1.order_id,
+    t1.distance_km,
+    t1.avg_speed_kmhr,
+    cco.customer_id
+FROM (
+  SELECT 
+      cro.runner_id,
+      cro.order_id,
+      AVG(cro.distance) AS distance_km,
+      ROUND(AVG(cro.distance/(cro.duration/60))) AS avg_speed_kmhr
+  FROM cro
+  WHERE cro.duration IS NOT NULL
+  GROUP BY cro.runner_id, cro.order_id
+  ORDER BY cro.runner_id) t1
+INNER JOIN cco ON t1.order_id = cco.order_id
+
+/* Seems like customer 102 distance is incorrect for order id #8, as it seems like an outlier based on previous orders form same customer. 
+Besides this, we can notice how with greater distance, the average speed is lower compared with the shortest distance (10km). 
+
+| runner_id | order_id | distance_km | avg_speed_kmhr | customer_id |
+| --------- | -------- | ----------- | -------------- | ----------- |
+| 1         | 1        | 20          | 38             | 101         |
+| 1         | 2        | 20          | 44             | 101         |
+| 1         | 3        | 13.4        | 40             | 102         |
+| 1         | 3        | 13.4        | 40             | 102         |
+| 2         | 4        | 23.4        | 35             | 103         |
+| 2         | 4        | 23.4        | 35             | 103         |
+| 2         | 4        | 23.4        | 35             | 103         |
+| 3         | 5        | 10          | 40             | 104         |
+| 2         | 7        | 25          | 60             | 105         |
+| 2         | 8        | 23.4        | 94             | 102         |
+| 1         | 10       | 10          | 60             | 104         |
+| 1         | 10       | 10          | 60             | 104         |
+*/
+
+/* 7. What is the successful delivery percentage for each runner? */
+SELECT 
+	cro.runner_id,
+    COUNT(cro.cancellation) AS total_cancellations,
+    COUNT(*) AS total_orders,
+    CONCAT(100-100*COUNT(cro.cancellation)/COUNT(*),'%') AS successful_delivery_rate
+FROM cro
+GROUP BY cro.runner_id
+ORDER BY cro.runner_id
+
+/*
+| runner_id | total_cancellations | total_orders | successful_delivery_rate |
+| --------- | ------------------- | ------------ | ------------------------ |
+| 1         | 0                   | 4            | 100%                     |
+| 2         | 1                   | 4            | 75%                      |
+| 3         | 1                   | 2            | 50%                      |
+*/
+
