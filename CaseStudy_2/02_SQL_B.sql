@@ -1,5 +1,3 @@
-
-
 WITH cco AS (
   SELECT 
 	c_o.customer_id,
@@ -38,4 +36,5 @@ WITH cco AS (
   FROM pizza_runner.runner_orders r_o
 )
    
-/* 1. How many pizzas were ordered?*/
+/* 1. How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)*/
+
