@@ -199,3 +199,29 @@ ORDER BY TO_CHAR(cco.order_time, 'YYYY-MM-DD'), EXTRACT(HOUR FROM cco.order_time
 | 2020-01-10 | 11   | 1              |
 | 2020-01-11 | 18   | 2              |
 */
+
+
+/* 10. What was the volume of orders for each day of the week?*/
+SELECT
+	EXTRACT(ISODOW FROM cco.order_time) AS DOW,
+    CASE
+    	WHEN EXTRACT(ISODOW FROM cco.order_time) = 1 THEN 'Monday'
+    	WHEN EXTRACT(ISODOW FROM cco.order_time) = 2 THEN 'Tuesday'
+    	WHEN EXTRACT(ISODOW FROM cco.order_time) = 3 THEN 'Wednesday'
+    	WHEN EXTRACT(ISODOW FROM cco.order_time) = 4 THEN 'Thursday'
+    	WHEN EXTRACT(ISODOW FROM cco.order_time) = 5 THEN 'Friday'
+    	WHEN EXTRACT(ISODOW FROM cco.order_time) = 6 THEN 'Saturday'
+    	WHEN EXTRACT(ISODOW FROM cco.order_time) = 7 THEN 'Sunday'
+	END DOW_Name,
+    COUNT(*) AS Orders_Per_DOW
+FROM cco
+GROUP BY DOW
+ORDER BY DOW
+/*
+| dow | dow_name  | orders_per_dow |
+| --- | --------- | -------------- |
+| 3   | Wednesday | 5              |
+| 4   | Thursday  | 3              |
+| 5   | Friday    | 1              |
+| 6   | Saturday  | 5              |
+*/
