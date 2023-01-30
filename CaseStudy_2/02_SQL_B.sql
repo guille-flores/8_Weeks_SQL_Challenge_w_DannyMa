@@ -93,3 +93,33 @@ ORDER BY Number_of_Pizzas DESC
 | 2        | 1                | 10                    | 10                        |
 | 8        | 1                | 20                    | 20                        |
 */
+
+/* 4. What was the average distance travelled for each customer? */
+SELECT 
+	cco.customer_id,
+    ROUND(AVG(cro.distance)::NUMERIC,2) AS avg_distance_km
+FROM cco
+INNER JOIN cro on cco.order_id = cro.order_id
+WHERE cro.cancellation IS NULL
+GROUP BY cco.customer_id
+
+/*
+| customer_id | avg_distance_km |
+| ----------- | --------------- |
+| 101         | 20.00           |
+| 102         | 16.73           |
+| 105         | 25.00           |
+| 104         | 10.00           |
+| 103         | 23.40           |
+*/
+
+/* 5. What was the difference between the longest and shortest delivery times for all orders? */
+SELECT 
+    MAX(cro.duration)-MIN(cro.duration) AS max_min_delivery_difference
+FROM cro
+WHERE cro.duration IS NOT NULL;
+/*
+| max_min_delivery_difference |
+| --------------------------- |
+| 30                          |
+*/
