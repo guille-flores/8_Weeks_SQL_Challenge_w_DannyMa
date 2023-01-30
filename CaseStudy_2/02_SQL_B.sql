@@ -38,3 +38,18 @@ WITH cco AS (
    
 /* 1. How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)*/
 
+SELECT 
+	'Week #'|| RANK() OVER(ORDER BY DATE_TRUNC('week', run.registration_date)) AS Number_Of_Week,
+    COUNT(*) AS Registered_Runners
+FROM pizza_runner.runners run
+GROUP BY DATE_TRUNC('week', run.registration_date)
+/*
+| number_of_week | registered_runners |
+| -------------- | ------------------ |
+| Week #1        | 2                  |
+| Week #2        | 1                  |
+| Week #3        | 1                  |
+*/
+
+/* 2. What was the average time in minutes it took for each runner to arrive at the Pizza Runner HQ to pickup the order?*/
+
