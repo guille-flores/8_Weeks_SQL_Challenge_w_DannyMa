@@ -52,4 +52,44 @@ GROUP BY DATE_TRUNC('week', run.registration_date)
 */
 
 /* 2. What was the average time in minutes it took for each runner to arrive at the Pizza Runner HQ to pickup the order?*/
+SELECT 
+	cro.runner_id,
+    AVG(EXTRACT('minute' FROM cro.pickup_time - cco.order_time))::INTEGER AS pickup_delay
+FROM cco
+INNER JOIN cro on cco.order_id = cro.order_id
+WHERE cro.cancellation IS NULL
+GROUP BY cro.runner_id
+ORDER BY cro.runner_id
 
+/*
+| runner_id | pickup_delay |
+| --------- | ------------ |
+| 1         | 15           |
+| 2         | 23           |
+| 3         | 10           |
+*/
+
+/* 3. Is there any relationship between the number of pizzas and how long the order takes to prepare? */
+SELECT 
+	cco.order_id,
+    COUNT(*) AS Number_of_Pizzas,
+    AVG(EXTRACT('minute' FROM cro.pickup_time - cco.order_time))::INTEGER AS avg_order_pickup_time,
+    (AVG(EXTRACT('minute' FROM cro.pickup_time - cco.order_time))/COUNT(*))::INTEGER AS avg_pickup_time_per_pizza
+FROM cco
+INNER JOIN cro on cco.order_id = cro.order_id
+WHERE cro.cancellation IS NULL
+GROUP BY cco.order_id
+ORDER BY Number_of_Pizzas DESC
+
+/* In general, the more pizzas in an order, the longer it takes. On average, 1 pizza is done in 10 min, except for order_id 8.
+| order_id | number_of_pizzas | avg_order_pickup_time | avg_pickup_time_per_pizza |
+| -------- | ---------------- | --------------------- | ------------------------- |
+| 4        | 3                | 29                    | 10                        |
+| 3        | 2                | 21                    | 10                        |
+| 10       | 2                | 15                    | 8                         |
+| 7        | 1                | 10                    | 10                        |
+| 1        | 1                | 10                    | 10                        |
+| 5        | 1                | 10                    | 10                        |
+| 2        | 1                | 10                    | 10                        |
+| 8        | 1                | 20                    | 20                        |
+*/
