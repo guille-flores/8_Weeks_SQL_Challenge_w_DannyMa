@@ -10,7 +10,8 @@ WITH cco AS (
   	CASE
   		WHEN c_o.extras = '' OR c_o.extras = 'null' THEN NULL
   		ELSE c_o.extras
-  	END extras
+  	END extras,
+	c_o.order_time
   FROM pizza_runner.customer_orders c_o
 ), cro AS (
   SELECT 
