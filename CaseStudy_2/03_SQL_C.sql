@@ -76,3 +76,27 @@ INNER JOIN pizza_runner.pizza_toppings toppings ON ext.extras_id = toppings.topp
 | Cheese.            | 1               |
 | Chicken            | 1               |
 */
+
+/* 3. What was the most common exclusion? */
+SELECT
+    toppings.topping_name,
+    exc.total_excluded
+FROM (
+  SELECT 
+    UNNEST(STRING_TO_ARRAY(cco.exclusions, ','))::INTEGER AS exc_id,
+    COUNT(*) AS total_excluded
+  FROM cco
+  WHERE cco.exclusions IS NOT NULL
+  GROUP BY exc_id) exc
+INNER JOIN pizza_runner.pizza_toppings toppings ON exc.exc_id = toppings.topping_id
+ORDER BY exc.total_excluded DESC
+
+/* Cheese was the most commonly excluded topping
+| topping_name | total_excluded |
+| ------------ | -------------- |
+| Cheese       | 4              |
+| BBQ Sauce    | 1              |
+| Mushrooms    | 1              |
+*/
+
+
