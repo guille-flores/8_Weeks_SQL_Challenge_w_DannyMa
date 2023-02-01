@@ -56,3 +56,23 @@ GROUP BY r.pizza_id, n.pizza_name
 | 1        | Meatlovers | 2, 8, 4, 10, 5, 1, 6, 3 | BBQ Sauce, Pepperoni, Cheese, Salami, Chicken, Bacon, Mushrooms, Beef |
 | 2        | Vegetarian | 12, 4, 6, 7, 9, 11      | Tomato Sauce, Cheese, Mushrooms, Onions, Peppers, Tomatoes            |
 */
+
+/* 2. What was the most commonly added extra?*/
+SELECT
+    toppings.topping_name,
+    ext.total_requested
+FROM (
+  SELECT 
+    UNNEST(STRING_TO_ARRAY(cco.extras, ','))::INTEGER AS extras_id,
+    COUNT(*) AS total_requested
+  FROM cco
+  WHERE cco.extras IS NOT NULL
+  GROUP BY extras_id) ext
+INNER JOIN pizza_runner.pizza_toppings toppings ON ext.extras_id = toppings.topping_id
+/* Bacon was the most commonly added extra.
+| extra_topping_name | total_requested |
+| ------------------ | --------------- |
+| Bacon              | 4               |
+| Cheese.            | 1               |
+| Chicken            | 1               |
+*/
