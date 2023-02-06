@@ -274,3 +274,6 @@ ORDER BY order_id, order_row
 | 10       | 14        | Meatlovers | Bacon, BBQ Sauce, Beef, 2xCheese, Chicken, , Pepperoni, Salami          |
 | 10       | 14        | Meatlovers | 2xBacon, , Beef, Cheese, Chicken, Mushrooms, Pepperoni, Salami          |
 */
+
+/*6. What is the total quantity of each ingredient used in all delivered pizzas sorted by most frequent first?*/
+
