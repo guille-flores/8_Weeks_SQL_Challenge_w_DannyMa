@@ -185,3 +185,73 @@ ORDER BY order_id
 | 10       | Meatlovers                                                      |
 */
 
+/* 5. Generate an alphabetically ordered comma separated ingredient list for each pizza order from the customer_orders table and add a 2x in front of any relevant ingredients
+For example: "Meat Lovers: 2xBacon, Beef, ... , Salami"
+*/
+
+SELECT
+  order_id,
+  order_row,
+  pizza_name,
+    CASE
+      WHEN POSITION(t.topping_name IN wo_exc) > 0 THEN REGEXP_REPLACE(wo_exc, t.topping_name, '2x'||t.topping_name)
+      ELSE wo_exc
+    END new_recipe
+FROM (
+
+  SELECT
+    order_id,
+    order_row,
+    pizza_name,
+    CASE
+      WHEN POSITION(t.topping_name IN tt1.topping_name) > 0 THEN REGEXP_REPLACE(tt1.topping_name, t.topping_name, '')
+      ELSE tt1.topping_name
+    END wo_exc,
+    exp_extras
+  FROM (
+    SELECT
+        corank.order_id,
+        corank.order_row,
+        corank.pizza_id,
+        pizza_name,
+        STRING_AGG(exp_toppings::VARCHAR, ', ') AS exp_toppings,
+        STRING_AGG(topping_name, ', ') AS topping_name,
+        UNNEST(exclusions) AS exc_exp,
+        UNNEST(extras) AS exp_extras
+    FROM (
+      SELECT 
+          re.pizza_id AS pizza_id,
+          pizza_name,
+          UNNEST(STRING_TO_ARRAY(toppings, ', '))::INTEGER AS exp_toppings
+      FROM pizza_runner.pizza_recipes re
+      INNER JOIN pizza_runner.pizza_names pz ON pz.pizza_id = re.pizza_id
+    ) exp_t1
+    INNER JOIN pizza_runner.pizza_toppings t ON t.topping_id = exp_t1.exp_toppings
+    INNER JOIN (
+      SELECT
+        order_id,
+        customer_id,
+        pizza_id,
+        ROW_NUMBER() OVER(ORDER BY order_id ASC) AS order_row,
+        STRING_TO_ARRAY(
+          CASE
+            WHEN exclusions IS NULL THEN 'NULL'
+            ELSE exclusions
+          END, 
+          ', ') AS exclusions,
+        STRING_TO_ARRAY(
+            CASE
+              WHEN extras IS NULL THEN 'NULL'
+              ELSE extras
+            END, 
+            ', ') AS extras	
+      FROM cco
+    ) corank ON corank.pizza_id = exp_t1.pizza_id
+    GROUP BY corank.order_id, corank.order_row, corank.pizza_id, pizza_name, exclusions, extras
+    ) tt1
+  LEFT JOIN pizza_runner.pizza_toppings t ON t.topping_id::VARCHAR = exc_exp
+) temp1
+LEFT JOIN pizza_runner.pizza_toppings t ON t.topping_id::VARCHAR = exp_extras
+ORDER BY order_id, order_row
+
+
