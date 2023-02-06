@@ -254,4 +254,23 @@ FROM (
 LEFT JOIN pizza_runner.pizza_toppings t ON t.topping_id::VARCHAR = exp_extras
 ORDER BY order_id, order_row
 
-
+/*
+| order_id | order_row | pizza_name | new_recipe                                                              |
+| -------- | --------- | ---------- | ----------------------------------------------------------------------- |
+| 1        | 1         | Meatlovers | Bacon, BBQ Sauce, Beef, Cheese, Chicken, Mushrooms, Pepperoni, Salami   |
+| 2        | 2         | Meatlovers | Bacon, BBQ Sauce, Beef, Cheese, Chicken, Mushrooms, Pepperoni, Salami   |
+| 3        | 3         | Meatlovers | Bacon, BBQ Sauce, Beef, Cheese, Chicken, Mushrooms, Pepperoni, Salami   |
+| 3        | 4         | Vegetarian | Cheese, Mushrooms, Onions, Peppers, Tomatoes, Tomato Sauce              |
+| 4        | 5         | Meatlovers | Bacon, BBQ Sauce, Beef, , Chicken, Mushrooms, Pepperoni, Salami         |
+| 4        | 6         | Meatlovers | Bacon, BBQ Sauce, Beef, , Chicken, Mushrooms, Pepperoni, Salami         |
+| 4        | 7         | Vegetarian | , Mushrooms, Onions, Peppers, Tomatoes, Tomato Sauce                    |
+| 5        | 8         | Meatlovers | 2xBacon, BBQ Sauce, Beef, Cheese, Chicken, Mushrooms, Pepperoni, Salami |
+| 6        | 9         | Vegetarian | Cheese, Mushrooms, Onions, Peppers, Tomatoes, Tomato Sauce              |
+| 7        | 10        | Vegetarian | Cheese, Mushrooms, Onions, Peppers, Tomatoes, Tomato Sauce              |
+| 8        | 11        | Meatlovers | Bacon, BBQ Sauce, Beef, Cheese, Chicken, Mushrooms, Pepperoni, Salami   |
+| 9        | 12        | Meatlovers | Bacon, BBQ Sauce, Beef, Cheese, 2xChicken, Mushrooms, Pepperoni, Salami |
+| 9        | 12        | Meatlovers | 2xBacon, BBQ Sauce, Beef, , Chicken, Mushrooms, Pepperoni, Salami       |
+| 10       | 13        | Meatlovers | Bacon, BBQ Sauce, Beef, Cheese, Chicken, Mushrooms, Pepperoni, Salami   |
+| 10       | 14        | Meatlovers | Bacon, BBQ Sauce, Beef, 2xCheese, Chicken, , Pepperoni, Salami          |
+| 10       | 14        | Meatlovers | 2xBacon, , Beef, Cheese, Chicken, Mushrooms, Pepperoni, Salami          |
+*/
