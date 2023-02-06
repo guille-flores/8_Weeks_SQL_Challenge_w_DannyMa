@@ -105,5 +105,83 @@ Meat Lovers - Exclude Beef
 Meat Lovers - Extra Bacon
 Meat Lovers - Exclude Cheese, Bacon - Extra Mushroom, Peppers 
 */
-
+SELECT 
+	order_id, 
+    pizza_name || 
+    CASE 
+    	WHEN exclusions IS NOT NULL THEN ' - Exclude ' || 
+        	REGEXP_REPLACE(
+              REGEXP_REPLACE(
+                REGEXP_REPLACE(
+                 REGEXP_REPLACE(
+                   REGEXP_REPLACE(  
+                     REGEXP_REPLACE(
+                       REGEXP_REPLACE(
+                         REGEXP_REPLACE(   
+                            REGEXP_REPLACE(
+                              REGEXP_REPLACE(
+                                REGEXP_REPLACE(
+                                  REGEXP_REPLACE(exclusions, '1', 'Bacon')
+                                ,'2', 'BBQ Sauce')
+                              , '3', 'Beef')
+                            , '4', 'Cheese') 
+                          , '5', 'Chicken')
+                        , '6', 'Mushrooms') 
+                      , '7', 'Onions') 
+                    , '8', 'Pepperoni') 
+                  , '9', 'Peppers')
+            	, '10', 'Salami')
+              , '11', 'Tomatoes')
+            , '12', 'Tomato Sauce')     
+    	ELSE ''
+    END 
+    ||
+    CASE 
+    	WHEN extras IS NOT NULL THEN ' - Extra ' || 
+        	REGEXP_REPLACE(
+              REGEXP_REPLACE(
+                REGEXP_REPLACE(
+                 REGEXP_REPLACE(
+                   REGEXP_REPLACE(  
+                     REGEXP_REPLACE(
+                       REGEXP_REPLACE(
+                         REGEXP_REPLACE(   
+                            REGEXP_REPLACE(
+                              REGEXP_REPLACE(
+                                REGEXP_REPLACE(
+                                  REGEXP_REPLACE(extras, '1', 'Bacon')
+                                ,'2', 'BBQ Sauce')
+                              , '3', 'Beef')
+                            , '4', 'Cheese') 
+                          , '5', 'Chicken')
+                        , '6', 'Mushrooms') 
+                      , '7', 'Onions') 
+                    , '8', 'Pepperoni') 
+                  , '9', 'Peppers')
+            	, '10', 'Salami')
+              , '11', 'Tomatoes')
+            , '12', 'Tomato Sauce')     
+    	ELSE ''
+    END pizza_order_reformat
+FROM cco
+INNER JOIN pizza_runner.pizza_names p on p.pizza_id = cco.pizza_id
+ORDER BY order_id
+/*
+| order_id | pizza_order_reformat_ii                                         |
+| -------- | --------------------------------------------------------------- |
+| 1        | Meatlovers                                                      |
+| 2        | Meatlovers                                                      |
+| 3        | Meatlovers                                                      |
+| 3        | Vegetarian                                                      |
+| 4        | Vegetarian - Exclude Cheese                                     |
+| 4        | Meatlovers - Exclude Cheese                                     |
+| 4        | Meatlovers - Exclude Cheese                                     |
+| 5        | Meatlovers - Extra Bacon                                        |
+| 6        | Vegetarian                                                      |
+| 7        | Vegetarian - Extra Bacon                                        |
+| 8        | Meatlovers                                                      |
+| 9        | Meatlovers - Exclude Cheese - Extra Bacon, Chicken              |
+| 10       | Meatlovers - Exclude BBQ Sauce, Mushrooms - Extra Bacon, Cheese |
+| 10       | Meatlovers                                                      |
+*/
 
