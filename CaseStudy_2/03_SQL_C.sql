@@ -276,4 +276,79 @@ ORDER BY order_id, order_row
 */
 
 /*6. What is the total quantity of each ingredient used in all delivered pizzas sorted by most frequent first?*/
+SELECT
+    recipes_exp AS topping,
+    topping_name,
+    CASE
+    	WHEN count_recipe IS NULL THEN 0
+        ELSE count_recipe
+    END
+    +
+    CASE
+    	WHEN count_extras IS NULL THEN 0
+        ELSE count_extras
+    END
+    -
+    CASE
+    	WHEN count_exclusions IS NULL THEN 0
+        ELSE count_exclusions
+    END total_ingredients
+FROM (
+  SELECT
+      extras_exp,
+      COUNT(extras_exp) AS count_extras
+  FROM (
+      SELECT
+          UNNEST(STRING_TO_ARRAY(extras, ', ')) AS extras_exp
+      FROM cco
+      INNER JOIN cro ON cro.order_id = cco.order_id
+      WHERE cancellation IS NULL
+  ) t1
+  GROUP BY extras_exp
+) t2
+FULL JOIN (
+  SELECT 
+      recipes_exp,
+      COUNT(recipes_exp) AS count_recipe
+  FROM (
+      SELECT
+          UNNEST(STRING_TO_ARRAY(toppings, ', ')) AS recipes_exp
+      FROM cco
+      INNER JOIN pizza_runner.pizza_recipes re ON re.pizza_id = cco.pizza_id
+      INNER JOIN cro ON cro.order_id = cco.order_id
+      WHERE cancellation IS NULL
+  ) t3
+  GROUP BY recipes_exp
+) t4 ON t4.recipes_exp = t2.extras_exp
+FULL JOIN (
+  SELECT
+      exclusions_exp,
+      COUNT(exclusions_exp) AS count_exclusions
+  FROM (
+      SELECT
+          UNNEST(STRING_TO_ARRAY(exclusions, ', ')) AS exclusions_exp
+      FROM cco
+      INNER JOIN cro ON cro.order_id = cco.order_id
+      WHERE cancellation IS NULL
+  ) t5
+  GROUP BY exclusions_exp
+) t6 ON t6.exclusions_exp = recipes_exp
+INNER JOIN pizza_runner.pizza_toppings t ON t.topping_id = recipes_exp::INTEGER
+ORDER BY total_ingredients DESC
 
+/*
+| topping | topping_name | total_ingredients |
+| ------- | ------------ | ----------------- |
+| 1       | Bacon        | 12                |
+| 6       | Mushrooms    | 11                |
+| 4       | Cheese       | 10                |
+| 8       | Pepperoni    | 9                 |
+| 10      | Salami       | 9                 |
+| 5       | Chicken      | 9                 |
+| 3       | Beef         | 9                 |
+| 2       | BBQ Sauce    | 8                 |
+| 12      | Tomato Sauce | 3                 |
+| 7       | Onions       | 3                 |
+| 9       | Peppers      | 3                 |
+| 11      | Tomatoes     | 3                 |
+*/
