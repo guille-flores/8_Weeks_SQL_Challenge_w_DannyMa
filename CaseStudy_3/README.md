@@ -98,14 +98,43 @@ Try to keep it as short as possible - you may also want to run some sort of join
 7. 	What is the customer count and percentage breakdown of all 5 plan_name values at 2020-12-31?
 8. 	How many customers have upgraded to an annual plan in 2020?
 9. 	How many days on average does it take for a customer to an annual plan from the day they join Foodie-Fi?
-10. 	Can you further breakdown this average value into 30 day periods (i.e. 0-30 days, 31-60 days etc)
-11. 	How many customers downgraded from a pro monthly to a basic monthly plan in 2020?
+10. Can you further breakdown this average value into 30 day periods (i.e. 0-30 days, 31-60 days etc)
+11. How many customers downgraded from a pro monthly to a basic monthly plan in 2020?
 
 ### C. Challenge Payment Question
 The Foodie-Fi team wants you to create a new payments table for the year 2020 that includes amounts paid by each customer in the subscriptions table with the following requirements:
+* monthly payments always occur on the same day of month as the original start_date of any monthly paid plan
+* upgrades from basic to monthly or pro plans are reduced by the current paid amount in that month and start immediately
+* upgrades from pro monthly to pro annual are paid at the end of the current billing period and also starts at the end of the month period
+* once a customer churns they will no longer make payments
 
-monthly payments always occur on the same day of month as the original start_date of any monthly paid plan
-upgrades from basic to monthly or pro plans are reduced by the current paid amount in that month and start immediately
-upgrades from pro monthly to pro annual are paid at the end of the current billing period and also starts at the end of the month period
-once a customer churns they will no longer make payments
 Example outputs for this table might look like the following:
+|customer_id	|plan_id	|plan_name	|	payment_date	|amount	|payment_order	|
+|---	|---	|---	|	---	|---	|---	|
+|1	|1	|basic monthly	|	2020-08-08	|9.9	|1	|
+|1	|1	|basic monthly	|	2020-09-08	|9.9	|2	|
+|1	|1	|basic monthly	|	2020-10-08	|9.9	|3	|
+|1	|1	|basic monthly	|	2020-11-08	|9.9	|4	|
+|1	|1	|basic monthly	|	2020-12-08	|9.9	|5	|
+|2	|3	|pro annual	|	2020-09-27	|199	|1	|
+|13	|1	|basic monthly	|	2020-12-22	|9.9	|1	|
+|15	|2	|pro monthly	|	2020-03-24	|19.9	|1	|
+|15	|2	|pro monthly	|	2020-04-24	|19.9	|2	|
+|16	|1	|basic monthly	|	2020-06-07	|9.9	|1	|
+|16	|1	|basic monthly	|	2020-07-07	|9.9	|2	|
+|16	|1	|basic monthly	|	2020-08-07	|9.9	|3	|
+|16	|1	|basic monthly	|	2020-09-07	|9.9	|4	|
+|16	|1	|basic monthly	|	2020-10-07	|9.9	|5	|
+|16	|3	|pro annual	|	2020-10-21	|189.1	|6	|
+|18	|2	|pro monthly	|	2020-07-13	|19.9	|1	|
+|18	|2	|pro monthly	|	2020-08-13	|19.9	|2	|
+|18	|2	|pro monthly	|	2020-09-13	|19.9	|3	|
+|18	|2	|pro monthly	|	2020-10-13	|19.9	|4	|
+|18	|2	|pro monthly	|	2020-11-13	|19.9	|5	|
+|18	|2	|pro monthly	|	2020-12-13	|19.9	|6	|
+|19	|2	|pro monthly	|	2020-06-29	|19.9	|1	|
+|19	|2	|pro monthly	|	2020-07-29	|19.9	|2	|
+|19	|3	|pro annual	|	2020-08-29	|199	|3	|
+
+
+
