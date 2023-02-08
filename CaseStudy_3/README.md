@@ -1,3 +1,3 @@
 # Case Study #3 - Foodie-Fi
 
-![https://8weeksqlchallenge.com/images/case-study-designs/3.png]
+![Danny Ma Case Study #3 Foodie image](https://8weeksqlchallenge.com/images/case-study-designs/3.png)
