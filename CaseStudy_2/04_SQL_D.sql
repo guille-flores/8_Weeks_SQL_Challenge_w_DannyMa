@@ -35,3 +35,20 @@ WITH cco AS (
       END cancellation
   FROM pizza_runner.runner_orders r_o
 )
+
+/* 1. If a Meat Lovers pizza costs $12 and Vegetarian costs $10 and there were no charges for changes - how much money has Pizza Runner made so far if there are no delivery fees? */
+SELECT 
+	'$'|| SUM(CASE
+    	WHEN pizza_id = '1' THEN 12
+        WHEN pizza_id = '2' THEN 10
+    END) total_revenue
+FROM cco
+INNER JOIN cro ON cco.order_id = cro.order_id
+WHERE cancellation IS NULL
+
+/*
+| total_revenue |
+| ------------- |
+| $138          |
+*/
+
