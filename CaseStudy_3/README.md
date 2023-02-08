@@ -68,14 +68,14 @@ When customers churn - they will keep their access until the end of their curren
 | 19 | 2 | 	2020-06-29|
 | 19 | 3 | 	2020-08-29|
 
-## Interactive SQL Instance
+## [Interactive SQL Instance](https://www.db-fiddle.com/f/rHJhRrXy5hbVBNJ6F6b9gJ/16)
 You can use the embedded DB Fiddle below to easily access these example datasets - this interactive session has everything you need to start solving these questions using SQL.
 
 You can click on the Edit on DB Fiddle link on the top right hand corner of the embedded session below and it will take you to a fully functional SQL editor where you can write your own queries to analyse the data.
 
 You can feel free to choose any SQL dialect you’d like to use, the existing Fiddle is using PostgreSQL 13 as default.
 
-Serious SQL students will have access to the same relevant schema SQL and example solutions which they can use with their Docker setup from within the course player!
+Serious SQL students will have access to the same relevant schema SQL and example solutions which they can use with their Docker setup from within the course player! 
 
 <img width="757" alt="image" src="https://user-images.githubusercontent.com/96453138/217677612-1b874844-9a98-4dc2-b970-3594b1904f0d.png">
 
