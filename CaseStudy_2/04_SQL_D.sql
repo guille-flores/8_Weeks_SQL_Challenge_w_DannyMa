@@ -52,3 +52,43 @@ WHERE cancellation IS NULL
 | $138          |
 */
 
+/* 2. What if there was an additional $1 charge for any pizza extras?
+Add cheese is $1 extra */
+
+SELECT
+	SUM(total_pizza) + SUM(total_extra) AS profit_w_extra
+FROM (
+    SELECT
+        rn,
+        MAX(total_pizza) AS total_pizza,
+        SUM(CASE
+            WHEN extra_exp != 0 THEN 1
+            ELSE 0
+        END) AS total_extra
+    FROM (
+        SELECT 
+            cco.order_id,
+            pizza_id,
+            ROW_NUMBER() OVER(ORDER BY cco.order_id) AS rn,
+            CASE
+                WHEN pizza_id = '1' THEN 12
+                WHEN pizza_id = '2' THEN 10
+            END total_pizza,
+            UNNEST(
+              STRING_TO_ARRAY(
+                CASE
+                    WHEN extras IS NULL THEN '0'
+                    ELSE extras
+                END, ','))::INTEGER AS extra_exp
+        FROM cco
+        INNER JOIN cro ON cco.order_id = cro.order_id
+        WHERE cancellation IS NULL
+    ) t1
+    GROUP BY rn
+) t2
+
+/*
+| profit_w_extra |
+| -------------- |
+| 142            |
+*/
