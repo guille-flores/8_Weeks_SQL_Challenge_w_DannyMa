@@ -124,4 +124,42 @@ Time between order and pickup
 Delivery duration
 Average speed
 Total number of pizzas*/
+SELECT
+	cco.customer_id,
+    cco.order_id,
+    cro.runner_id,
+    rr.rating,
+    cco.order_time,
+    cro.pickup_time,
+    cro.pickup_time-cco.order_time AS time_between_order_and_pickup,
+    cro.duration AS delivery_duration,
+    cro.distance/(cro.duration/60) AS avg_speed_kmh,
+    COUNT(*) AS total_number_pizza
+FROM cco
+INNER JOIN cro ON cro.order_id = cco.order_id
+LEFT JOIN pizza_runner.runner_ratings rr ON rr.runner_id = cro.runner_id AND cco.order_id = rr.order_id
+WHERE cancellation IS NULL
+GROUP BY 
+	cco.customer_id,
+    cco.order_id,
+    cro.runner_id,
+    rr.rating,
+    cco.order_time,
+    cro.pickup_time,
+    cro.pickup_time-cco.order_time,
+    cro.duration,
+    cro.distance
+ORDER BY order_id
 
+/*
+| customer_id | order_id | runner_id | rating | order_time               | pickup_time              | time_between_order_and_pickup | delivery_duration | avg_speed_kmh     | total_number_pizza |
+| ----------- | -------- | --------- | ------ | ------------------------ | ------------------------ | ----------------------------- | ----------------- | ----------------- | ------------------ |
+| 101         | 1        | 1         | 5      | 2020-01-01T18:05:02.000Z | 2020-01-01T18:15:34.000Z | [object Object]               | 32                | 37.5              | 1                  |
+| 101         | 2        | 1         | 5      | 2020-01-01T19:00:52.000Z | 2020-01-01T19:10:54.000Z | [object Object]               | 27                | 44.44444444444444 | 1                  |
+| 102         | 3        | 1         | 4      | 2020-01-02T23:51:23.000Z | 2020-01-03T00:12:37.000Z | [object Object]               | 20                | 40.2              | 2                  |
+| 103         | 4        | 2         | 5      | 2020-01-04T13:23:46.000Z | 2020-01-04T13:53:03.000Z | [object Object]               | 40                | 35.1              | 3                  |
+| 104         | 5        | 3         | 5      | 2020-01-08T21:00:29.000Z | 2020-01-08T21:10:57.000Z | [object Object]               | 15                | 40                | 1                  |
+| 105         | 7        | 2         | 4      | 2020-01-08T21:20:29.000Z | 2020-01-08T21:30:45.000Z | [object Object]               | 25                | 60                | 1                  |
+| 102         | 8        | 2         | 4      | 2020-01-09T23:54:33.000Z | 2020-01-10T00:15:02.000Z | [object Object]               | 15                | 93.6              | 1                  |
+| 104         | 10       | 1         | 5      | 2020-01-11T18:34:49.000Z | 2020-01-11T18:50:20.000Z | [object Object]               | 10                | 60                | 2                  |
+*/
