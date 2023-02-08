@@ -163,3 +163,29 @@ ORDER BY order_id
 | 102         | 8        | 2         | 4      | 2020-01-09T23:54:33.000Z | 2020-01-10T00:15:02.000Z | [object Object]               | 15                | 93.6              | 1                  |
 | 104         | 10       | 1         | 5      | 2020-01-11T18:34:49.000Z | 2020-01-11T18:50:20.000Z | [object Object]               | 10                | 60                | 2                  |
 */
+
+/* 5. If a Meat Lovers pizza was $12 and Vegetarian $10 fixed prices with no cost for extras and each runner is paid $0.30 per kilometre traveled - how much money does Pizza Runner have left over after these deliveries?*/
+
+SELECT
+	CAST(SUM(pizza_price) AS MONEY) AS revenue,
+    CAST(SUM(delivery_expenses)::NUMERIC AS MONEY) AS delivery_expenses,
+    CAST((SUM(pizza_price) - SUM(delivery_expenses))::NUMERIC  AS MONEY) AS profit
+FROM (
+SELECT
+	cco.order_id,
+	SUM(CASE
+    	WHEN cco.pizza_id = '1' THEN 12.0
+  		ELSE 10.0
+    END) pizza_price,
+    MAX(0.3*cro.distance) AS delivery_expenses
+FROM cco
+INNER JOIN cro ON cro.order_id = cco.order_id
+WHERE cancellation IS NULL
+GROUP BY cco.order_id
+) t1
+
+/*
+| revenue | delivery_expenses | profit |
+| ------- | ----------------- | ------ |
+| $138.00 | $43.56            | $94.44 |
+*/
