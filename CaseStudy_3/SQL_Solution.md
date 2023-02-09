@@ -243,8 +243,44 @@ GROUP BY plan_name, total_customers
 7. What is the customer count and percentage breakdown of all 5 plan_name values at 2020-12-31?
 
 ```sql
+WITH upd_cust_2020 AS (
+    SELECT
+        customer_id,
+        MAX(plan_id) AS plan_id,
+        MAX(start_date) AS start_date,
+  		(SELECT
+         	COUNT(DISTINCT customer_id)
+         FROM foodie_fi.subscriptions
+         ) AS total_cust
+    FROM (
+        SELECT
+            customer_id,
+            plan_id,
+            start_date,
+            ROW_NUMBER() OVER(PARTITION BY customer_id) AS row_num
+        FROM foodie_fi.subscriptions s
+        WHERE start_date <= '2020-12-31'
+    ) t1
+    GROUP BY customer_id
+)
 
+SELECT
+	plan_name,
+    COUNT(*) AS number_of_cust,
+    TO_CHAR(100*COUNT(*)::FLOAT/total_cust::FLOAT, 'fm00D00%') AS percentage
+FROM upd_cust_2020 t1
+INNER JOIN foodie_fi.plans pl
+	ON pl.plan_id = t1.plan_id
+GROUP BY plan_name, total_cust
 ```
+
+| plan_name     | number_of_cust | percentage |
+| ------------- | -------------- | ---------- |
+| basic monthly | 224            | 22.40%     |
+| pro monthly   | 326            | 32.60%     |
+| pro annual    | 195            | 19.50%     |
+| churn         | 236            | 23.60%     |
+| trial         | 19             | 01.90%     |
 
 8. How many customers have upgraded to an annual plan in 2020?
 
