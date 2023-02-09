@@ -40,6 +40,16 @@ ORDER BY customer_id, start_date
 | 19          | 3       | pro annual    | 2020-08-29T00:00:00.000Z |
 
 
+We can see that 
+- customer 1 started with a trial plan and, which last 7 days. Right after the trial ended, the consumer upgraded to a basic monthly plan.
+- customer 2, on the other hand, started with a trial and upgraded to a pro annual plan right after the trial period.
+- customer 11 started the trial and cancelled the subscription after the trial ended
+- customer 13 stated as customer 1, from trial to basic monthly plans. Then, after 7 days on basic plan, the customer upgraded to a pro monthly plan.
+- customer 15 went from trial to pro monthly, and after a bit more than 1 month, the customer cancelled the subscription.
+- customer 16 went from trial to basic monthly, and then, after 4.5 months happened, changed to pro annual.
+- customer 18 went from trial to pro monthly as soon as the trial ended
+- Finally, customer 19 went form trial to pro monthly, and after 2 months changed it to pro annual.
+
 ### B. Data Analysis Questions
 1. 	How many customers has Foodie-Fi ever had?
 2. 	What is the monthly distribution of trial plan start_date values for our dataset - use the start of the month as the group by value
