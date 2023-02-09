@@ -151,8 +151,46 @@ INNER JOIN total_cust t ON t.temp_id = c.temp_id
 5. How many customers have churned straight after their initial free trial - what percentage is this rounded to the nearest whole number?
 
 ```sql
+WITH churn_cust AS (
+    SELECT 
+        customer_id,
+        start_date AS churn_date
+    FROM foodie_fi.subscriptions s
+    WHERE plan_id = '4'
+), trial_cust AS (
+	SELECT 
+        customer_id,
+        start_date AS trial_date
+    FROM foodie_fi.subscriptions s
+    WHERE plan_id = '0'
+), trial_churn_cust AS (
+	SELECT
+  		tr.customer_id,
+  		trial_date,
+  churn_date
+  	FROM trial_cust tr
+  	INNER JOIN churn_cust cc 
+  		ON cc.customer_id = tr.customer_id
+)
 
+SELECT
+	churned_after_trial,
+    ROUND(100*churned_after_trial::FLOAT/total_customers::FLOAT) || '%' AS percentage
+FROM (
+    SELECT 
+        COUNT(*) AS churned_after_trial,
+        (SELECT
+            COUNT(DISTINCT customer_id)
+         FROM foodie_fi.subscriptions
+        ) AS total_customers
+    FROM trial_churn_cust
+    WHERE churn_date = trial_date + INTERVAL '7 day'
+) t1
 ```
+
+| churned_after_trial | percentage |
+| ------------------- | ---------- |
+| 92                  | 9%         |
 
 
 6. What is the number and percentage of customer plans after their initial free trial?
