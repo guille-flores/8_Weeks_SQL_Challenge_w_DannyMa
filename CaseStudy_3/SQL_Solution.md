@@ -196,8 +196,50 @@ FROM (
 6. What is the number and percentage of customer plans after their initial free trial?
 
 ```sql
+WITH trial_cust AS (
+	SELECT 
+        customer_id,
+        start_date AS trial_date,
+  		(SELECT
+            COUNT(DISTINCT customer_id)
+         FROM foodie_fi.subscriptions
+        ) AS total_customers
+    FROM foodie_fi.subscriptions s
+    WHERE plan_id = '0'
+)
 
+SELECT
+	plan_name,
+    COUNT(*) AS number_of_customers,
+    TO_CHAR(100*COUNT(*)::FLOAT/total_customers::FLOAT, 'fm00D00%') AS percentage
+FROM (
+  SELECT 
+      s.customer_id,
+      s.plan_id,
+  	  plan_name,
+      start_date,
+      trial_date,
+	  total_customers,
+      ROW_NUMBER() OVER(PARTITION BY s.customer_id ORDER BY s.customer_id, s.plan_id) AS row_num
+  FROM foodie_fi.subscriptions s
+  INNER JOIN trial_cust tr
+  		ON tr.customer_id = s.customer_id
+  INNER JOIN foodie_fi.plans pl
+  		ON s.plan_id =  pl.plan_id
+) t1
+WHERE row_num = 2
+GROUP BY plan_name, total_customers
 ``` 
+
+
+| plan_name     | number_of_customers | percentage |
+| ------------- | ------------------- | ---------- |
+| basic monthly | 546                 | 54.60%     |
+| churn         | 92                  | 09.20%     |
+| pro annual    | 37                  | 03.70%     |
+| pro monthly   | 325                 | 32.50%     |
+
+
 7. What is the customer count and percentage breakdown of all 5 plan_name values at 2020-12-31?
 
 ```sql
