@@ -297,8 +297,32 @@ WHERE plan_id = '3' AND DATE_PART('year', start_date) = 2020
 9. How many days on average does it take for a customer to an annual plan from the day they join Foodie-Fi?
 
 ```sql
+WITH customer_join_date AS (
+	SELECT
+  		customer_id,
+  		MIN(start_date) AS joined
+ 	FROM foodie_fi.subscriptions s
+  	GROUP BY customer_id
+), pro_annual_cust AS (
+	SELECT
+  		customer_id,
+  		start_date
+ 	FROM foodie_fi.subscriptions s
+  	WHERE plan_id = '3'
+)
+
+SELECT 
+	ROUND(AVG(pro_a.start_date - joined)) AS avg_days_upgrade_proannual
+FROM pro_annual_cust pro_a
+INNER JOIN customer_join_date AS cjd
+	ON cjd.customer_id = pro_a.customer_id
 
 ``` 
+
+| avg_days_upgrade_proannual |
+| -------------------------- |
+| 105                        |
+
 10. Can you further breakdown this average value into 30 day periods (i.e. 0-30 days, 31-60 days etc)
 
 ```sql
