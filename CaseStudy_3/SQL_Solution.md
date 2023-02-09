@@ -102,15 +102,50 @@ ORDER BY date_yyyy_mm_dd
 3. What plan start_date values occur after the year 2020 for our dataset? Show the breakdown by count of events for each plan_name
 
 ```sql
-
+SELECT
+    plan_name,
+    COUNT(*)
+FROM foodie_fi.subscriptions s
+INNER JOIN foodie_fi.plans p
+	ON p.plan_id = s.plan_id
+WHERE DATE_PART('year', start_date)::INTEGER > 2020 
+GROUP BY plan_name
 ```
+
+| plan_name     | count |
+| ------------- | ----- |
+| pro annual    | 63    |
+| churn         | 71    |
+| pro monthly   | 60    |
+| basic monthly | 8     |
 
 
 4. What is the customer count and percentage of customers who have churned rounded to 1 decimal place?
 
 ```sql
+WITH churned_cust AS (
+	SELECT
+  		'001' AS temp_id,
+  		COUNT(plan_id) AS churned_customers
+  	FROM foodie_fi.subscriptions s
+  	WHERE plan_id = '4'
+), total_cust AS (
+	SELECT
+  		'001' AS temp_id,
+  		COUNT(DISTINCT customer_id) AS total_customers
+  	FROM foodie_fi.subscriptions s
+)
 
+SELECT 
+	churned_customers,
+    TO_CHAR(100*churned_customers::FLOAT/total_customers::FLOAT, 'fm00D0%') AS percentage
+FROM churned_cust c
+INNER JOIN total_cust t ON t.temp_id = c.temp_id
 ```
+
+| churned_customers | percentage |
+| ----------------- | ---------- |
+| 307               | 30.7%      |
 
 
 5. How many customers have churned straight after their initial free trial - what percentage is this rounded to the nearest whole number?
