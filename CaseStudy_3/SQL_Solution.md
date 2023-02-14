@@ -326,8 +326,84 @@ INNER JOIN customer_join_date AS cjd
 10. Can you further breakdown this average value into 30 day periods (i.e. 0-30 days, 31-60 days etc)
 
 ```sql
+WITH customer_join_date AS (
+	SELECT
+  		customer_id,
+  		MIN(start_date) AS joined
+ 	FROM foodie_fi.subscriptions s
+  	GROUP BY customer_id
+), pro_annual_cust AS (
+	SELECT
+  		customer_id,
+  		start_date
+ 	FROM foodie_fi.subscriptions s
+  	WHERE plan_id = '3'
+), days_4_upgrade AS (
+	SELECT
+  		pro_a.customer_id AS customer_id,
+  		pro_a.start_date - joined AS days
+  	FROM pro_annual_cust pro_a
+	INNER JOIN customer_join_date AS cjd
+		ON cjd.customer_id = pro_a.customer_id 
+), days_labelled AS(
+    SELECT 
+        CASE 
+            WHEN days BETWEEN 0 AND 30 THEN '0-30 days'
+            WHEN days BETWEEN 31 AND 60 THEN '31-60 days'
+            WHEN days BETWEEN 61 AND 90 THEN '61-90 days'
+            WHEN days BETWEEN 91 AND 120 THEN '91-120 days'
+            WHEN days BETWEEN 121 AND 150 THEN '121-150 days'
+            WHEN days BETWEEN 151 AND 180 THEN '151-180 days'
+            WHEN days BETWEEN 181 AND 210 THEN '181-210 days'
+            WHEN days BETWEEN 211 AND 240 THEN '211-240 days'
+            WHEN days BETWEEN 241 AND 270 THEN '241-270 days'
+            WHEN days BETWEEN 271 AND 300 THEN '271-300 days'
+            WHEN days BETWEEN 301 AND 330 THEN '301-330 days'
+            WHEN days BETWEEN 331 AND 360 THEN '331-360 days'
+            ELSE '+361 days'
+        END days_label,
+  		days
+    FROM days_4_upgrade
+)
 
+SELECT
+	days_label,
+	ROUND(AVG(days)) AS avg_days_to_upgrade    
+FROM days_labelled
+GROUP BY days_label
+ORDER BY 
+	CASE 
+    	WHEN days_label = '0-30 days' THEN 1
+        WHEN days_label = '31-60 days' THEN 2
+        WHEN days_label = '61-90 days' THEN 3
+        WHEN days_label = '91-120 days' THEN 4
+        WHEN days_label = '121-150 days' THEN 5
+        WHEN days_label = '151-180 days' THEN 6
+        WHEN days_label = '181-210 days' THEN 7
+        WHEN days_label = '211-240 days' THEN 8
+        WHEN days_label = '241-270 days' THEN 9
+        WHEN days_label = '271-300 days' THEN 10
+        WHEN days_label = '301-330 days' THEN 11
+        WHEN days_label = '331-360 days' THEN 12
+        ELSE 13
+    END
 ``` 
+
+| days_label   | avg_days_to_upgrade |
+| ------------ | ------------------- |
+| 0-30 days    | 10                  |
+| 31-60 days   | 42                  |
+| 61-90 days   | 71                  |
+| 91-120 days  | 101                 |
+| 121-150 days | 133                 |
+| 151-180 days | 162                 |
+| 181-210 days | 191                 |
+| 211-240 days | 224                 |
+| 241-270 days | 257                 |
+| 271-300 days | 285                 |
+| 301-330 days | 327                 |
+| 331-360 days | 346                 |
+
 11. How many customers downgraded from a pro monthly to a basic monthly plan in 2020?
 
 
